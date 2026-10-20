@@ -33,7 +33,7 @@
 dsh plugin --profile web add dsh-theme-quartet
 ```
 
-装完重启 DSH 即可。想自己发一版、或看这套流程怎么走通，见 [PUBLISH.md](PUBLISH.md)。
+装完重启 DSH 即可。想自己发一版改个配色，改完 `node build.mjs` 重新构建即可。
 
 ### 方式一：一键脚本（推荐）
 
