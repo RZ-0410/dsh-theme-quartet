@@ -1,6 +1,0 @@
-# 本包的配置层。宿主半边是一个空 apply —— 纯 UI 插件的意义只是让包出现在
-# Loader 的 entries 里；client-modules 扫到 dsh.client 声明后，才会把浏览器
-# 半边挂进 __DSH_BOOT__ 并在 /plugins/theme-quartet/client.js 供应。
-- insert:
-    - id: theme-quartet
-      name: dsh-theme-quartet
