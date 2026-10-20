@@ -27,18 +27,18 @@
 
 ## 安装
 
-### 方式零：一条命令（推荐）
+### 一条命令
 
 ```bat
-dsh plugin --profile web add "https://github.com/RZ-0410/dsh-theme-quartet/releases/download/v0.1.0/dsh-theme-quartet-0.1.0.tgz"
+dsh plugin --profile web add dsh-theme-quartet
 ```
 
 装完**完全退出并重启** DSH。右下角出现换肤圆钮，`Alt + Shift + S` 也能开关面板。
 
-npm 包发布后可以更短：
+想锁死某个版本、或不想走 npm，可以直接装 GitHub Release 里的 tgz：
 
 ```bat
-dsh plugin --profile web add dsh-theme-quartet
+dsh plugin --profile web add "https://github.com/RZ-0410/dsh-theme-quartet/releases/download/v0.1.0/dsh-theme-quartet-0.1.0.tgz"
 ```
 
 ### 方式一：本地一键脚本
@@ -55,7 +55,7 @@ node tools\install.mjs
 
 然后**完全退出并重启 DeepSeek Harness**（loader 组合变了，必须重启；之后改 bundle 只需刷新页面）。
 
-### 方式二：手动
+### 方式二：手动安装
 
 1. 复制 `dsh-theme-quartet` 文件夹到
    `%USERPROFILE%\.dsh\profiles\desktop\node_modules\dsh-theme-quartet`
