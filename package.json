@@ -47,5 +47,14 @@
     "build": "node build.mjs",
     "check": "node tools/publish-check.mjs",
     "prepublishOnly": "node build.mjs && node tools/publish-check.mjs"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RZ-0410/dsh-theme-quartet.git"
+  },
+  "homepage": "https://github.com/RZ-0410/dsh-theme-quartet#readme",
+  "bugs": {
+    "url": "https://github.com/RZ-0410/dsh-theme-quartet/issues"
+  },
+  "author": "RZ-0410"
 }
