@@ -1,0 +1,51 @@
+{
+  "name": "dsh-theme-quartet",
+  "version": "0.1.0",
+  "description": "主题四合 —— DeepSeek Harness Web 界面的四套换肤皮肤（樱风 / 褐东风 / 潮汐 / 月壤），纯令牌覆盖，不改宿主源码",
+  "keywords": [
+    "deepseek-harness",
+    "dsh",
+    "dsh-plugin",
+    "theme",
+    "skin",
+    "deepseek"
+  ],
+  "license": "MIT",
+  "type": "module",
+  "main": "lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./client": "./lib/client.js",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "lib/index.js",
+    "lib/client.js",
+    "cordis.patch.yml",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=20",
+    "dsh": ">=0.1.7-rc.1"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web",
+      "inject": [
+        "@deepseek-ai/dsh-client-ui-theme"
+      ]
+    }
+  },
+  "scripts": {
+    "build": "node build.mjs",
+    "check": "node tools/publish-check.mjs",
+    "prepublishOnly": "node build.mjs && node tools/publish-check.mjs"
+  }
+}
