@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<title>theme-quartet 冒烟测试</title>
+<style>
+	/* 极简的宿主替身：只提供插件会用到的令牌与结构 */
+	body {
+		margin: 0;
+		font-family: "Inter", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+		background: var(--dsw-alias-bg-base, #fbf6f3);
+		color: var(--dsw-alias-label-primary, #2c3145);
+		--dsw-alias-bg-base: #fbf6f3;
+		--dsw-alias-bg-layer-1: #fff;
+		--dsw-alias-bg-layer-2: #f8f0ef;
+		--dsw-alias-bg-layer-3: #f2e7e7;
+		--dsw-alias-label-primary: #2c3145;
+		--dsw-alias-label-secondary: #5a6076;
+		--dsw-alias-label-tertiary: #8a8fa2;
+		--dsw-alias-border-l2: rgba(0, 0, 0, .1);
+		--dsw-alias-border-l3: rgba(0, 0, 0, .14);
+		--dsw-alias-brand-primary: #c8434f;
+		--dsw-alias-interactive-bg-hover: rgba(0, 0, 0, .05);
+		--dsw-specific-sidebar-fill: #f9f2f1;
+		--dsw-specific-bubble: #f6e3e4;
+		--dsw-radius-md: 12px;
+	}
+	.shell { display: grid; grid-template-columns: 240px 1fr; height: 100vh; }
+	.side { background: var(--dsw-specific-sidebar-fill, #f9f2f1); border-right: 1px solid var(--dsw-alias-border-l2, rgba(0,0,0,.1)); padding: 18px; font-size: 13px; }
+	.side b { display: block; margin-bottom: 14px; }
+	.side p { margin: 8px 0; color: var(--dsw-alias-label-tertiary, #8a8fa2); font-size: 12px; }
+	.main { display: flex; flex-direction: column; min-width: 0; }
+	.head { height: 52px; border-bottom: 1px solid var(--dsw-alias-border-l2, rgba(0,0,0,.1)); display: flex; align-items: center; padding: 0 24px; font-size: 13px; }
+	[data-conversation-scroll] { flex: 1; overflow: auto; padding: 24px; }
+	.thread { max-width: 680px; margin: 0 auto; display: grid; gap: 16px; font-size: 13.5px; line-height: 1.75; }
+	.bubble { justify-self: end; max-width: 70%; background: var(--dsw-specific-bubble, #f6e3e4); border-radius: 14px; padding: 10px 14px; }
+	.composer { padding: 12px 24px 90px; }
+	.box { max-width: 680px; margin: 0 auto; height: 64px; border: 1px solid var(--dsw-alias-border-l3, rgba(0,0,0,.14)); border-radius: 16px; background: var(--dsw-alias-bg-layer-1, #fff); }
+	pre#log { position: fixed; left: 12px; bottom: 12px; max-width: 46vw; font-size: 11px; line-height: 1.5; color: #0a0; background: #fff; padding: 8px; border: 1px solid #ddd; border-radius: 8px; white-space: pre-wrap; }
+</style>
+</head>
+<body>
+<div class="shell">
+	<aside class="side">
+		<b>DSH 宿主替身</b>
+		<p>冒烟测试：只验证插件挂载、令牌覆盖、面板交互。</p>
+		<p>当前皮肤：<span id="skin">未应用</span></p>
+	</aside>
+	<div class="main">
+		<div class="head">主题四合 · 冒烟测试</div>
+		<div data-conversation-scroll>
+			<div class="thread">
+				<div class="bubble">换肤后，这段文字应该始终清晰可读。</div>
+				<div>令牌层生效后，正文颜色、边框、气泡、输入框都会跟着换。底图只画在这个滚动区里，靠右缘透气，中间带保持接近纸面。</div>
+			</div>
+		</div>
+		<div class="composer"><div class="box"></div></div>
+	</div>
+</div>
+<pre id="log"></pre>
+
+<script>
+	window.__ModuleLoader__ = {
+		load(entry) {
+			window.__plugin = entry.factory((name) => {
+				throw new Error(`不应加载模块：${name}`);
+			});
+			window.__pluginId = entry.id;
+		},
+	};
+</script>
+<script src="../lib/client.js"></script>
+<script>
+	const log = [];
+	const out = document.getElementById('log');
+
+	function applyTokens(tokens) {
+		const body = document.body;
+		const dark = body.hasAttribute('data-ds-dark-theme');
+		for (const [name, pair] of Object.entries(tokens)) body.style.setProperty(name, dark ? pair.dark : pair.light);
+	}
+
+	const ctx = {
+		theme: {
+			overrideTokens(source, tokens) {
+				log.push(`overrideTokens(${source}, ${Object.keys(tokens).length} tokens)`);
+				applyTokens(tokens);
+				window.__applied = tokens;
+				return () => {
+					for (const name of Object.keys(tokens)) document.body.style.removeProperty(name);
+					window.__applied = null;
+				};
+			},
+		},
+		effect(fn) {
+			window.__dispose = fn();
+		},
+	};
+
+	window.__plugin.apply(ctx);
+
+	log.push(`id=${window.__pluginId}`);
+	log.push(`inject=${JSON.stringify(window.__plugin.inject)}`);
+
+	const host = document.getElementById('dsh-theme-quartet');
+	log.push(`root=${host !== null}`);
+	const orb = host.shadowRoot.querySelector('.orb');
+	orb.click();
+	log.push(`panelOpen=${host.shadowRoot.querySelector('.panel').classList.contains('open')}`);
+
+	const pressed = [...host.shadowRoot.querySelectorAll('.card')].map((card) => `${card.dataset.skin}:${card.getAttribute('aria-pressed')}`);
+	log.push(`cards=${pressed.join(' ')}`);
+	log.push(`htmlAttr=${document.documentElement.getAttribute('data-dsh-quartet')}`);
+	log.push(`bg=${getComputedStyle(document.querySelector('[data-conversation-scroll]')).backgroundImage.slice(0, 40)}`);
+	document.getElementById('skin').textContent = document.documentElement.getAttribute('data-dsh-quartet') || 'none';
+
+	// 依次点一遍四张卡，确认换肤链路无异常
+	for (const card of host.shadowRoot.querySelectorAll('.card')) {
+		card.click();
+		log.push(`→ ${card.dataset.skin} attr=${document.documentElement.getAttribute('data-dsh-quartet')} tokens=${window.__applied ? Object.keys(window.__applied).length : 0}`);
+	}
+
+	// 停在第 4 套（月壤）用于截图
+	host.shadowRoot.querySelector('[data-skin="jk"]').click();
+
+	out.textContent = log.join('\n');
+	window.__smoke = log;
+</script>
+</body>
+</html>

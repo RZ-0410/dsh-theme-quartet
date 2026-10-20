@@ -27,15 +27,21 @@
 
 ## 安装
 
-### 方式零：从 npm / 插件市场（发布后）
+### 方式零：一条命令（推荐）
+
+```bat
+dsh plugin --profile web add "https://github.com/RZ-0410/dsh-theme-quartet/releases/download/v0.1.0/dsh-theme-quartet-0.1.0.tgz"
+```
+
+装完**完全退出并重启** DSH。右下角出现换肤圆钮，`Alt + Shift + S` 也能开关面板。
+
+npm 包发布后可以更短：
 
 ```bat
 dsh plugin --profile web add dsh-theme-quartet
 ```
 
-装完重启 DSH 即可。想自己发一版改个配色，改完 `node build.mjs` 重新构建即可。
-
-### 方式一：一键脚本（推荐）
+### 方式一：本地一键脚本
 
 ```bat
 node tools\install.mjs
